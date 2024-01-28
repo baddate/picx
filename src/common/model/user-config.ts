@@ -15,7 +15,7 @@ export enum BranchModeEnum {
   // eslint-disable-next-line no-unused-vars
   newBranch = 'newBranch', // 新建分支
   // eslint-disable-next-line no-unused-vars
-  repoBranch = 'repoBranch' // 窗口分支
+  repoBranch = 'repoBranch' // 仓库分支
 }
 
 export interface DirModel {
@@ -36,6 +36,7 @@ export enum DirModeEnum {
 
 export interface UserConfigInfoModel {
   token: string
+  id: string
   owner: string
   email: string
   name: string
@@ -56,4 +57,5 @@ export interface UserConfigInfoModel {
 export interface CustomAxiosRequestConfig extends AxiosRequestConfig {
   success422?: boolean
   noShowErrorMsg?: boolean
+  cache?: any
 }

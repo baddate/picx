@@ -15,7 +15,7 @@
     <div class="header-right">
       <div class="user-info">
         <div class="username" @click="jumpOwnerRepo">
-          {{ userConfigInfo.owner ? userConfigInfo.owner : $t('header.notLogin') }}
+          {{ userConfigInfo.owner ? userConfigInfo.owner : $t('header.not_login') }}
         </div>
 
         <el-popover
@@ -78,10 +78,14 @@
               </el-select>
             </li>
             <el-divider style="margin: 5px 0" />
-            <li class="content-item" v-if="userConfigInfo.name" @click="logout">
+            <li
+              class="content-item"
+              v-if="userConfigInfo.name || userConfigInfo.owner"
+              @click="logout"
+            >
               {{ $t('header.logout') }}
             </li>
-            <li class="content-item" v-else @click="router.push('/config')">
+            <li class="content-item" v-else @click="router.push('/login')">
               {{ $t('header.login') }}
             </li>
           </ul>
@@ -107,10 +111,14 @@ const persistUserSettings = () => {
   store.dispatch('USER_SETTINGS_PERSIST')
 }
 
+// 退出登录
 const logout = () => {
   store.dispatch('LOGOUT')
-  router.push('/config')
+  router.push('/login')
   document.body.click()
+  setTimeout(() => {
+    window.location.reload()
+  })
 }
 
 const jumpOwnerRepo = () => {

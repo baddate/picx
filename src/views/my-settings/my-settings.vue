@@ -1,5 +1,7 @@
 <template>
   <div class="page-container settings-page-container">
+    <cloud-settings-bar style="margin-bottom: 20rem" />
+
     <el-collapse>
       <!-- 图片名称设置 -->
       <el-collapse-item :title="$t('settings.img_name.title')" name="1">
@@ -97,6 +99,7 @@
                 :key="item.name + '-' + item.id"
                 :label="item.name"
                 :value="item.name"
+                :disabled="isDeployGitHubPages(item.name)"
                 class="image-link-type-rule-option"
               >
                 <span class="left">{{ item.name }}</span>
@@ -145,8 +148,13 @@
         </ul>
       </el-collapse-item>
 
+      <!-- 图床部署设置 -->
+      <el-collapse-item :title="$t('settings.image_hosting_deploy.title')" name="6">
+        <deploy-bar />
+      </el-collapse-item>
+
       <!-- 主题设置 -->
-      <el-collapse-item :title="$t('settings.theme.title')" name="6">
+      <el-collapse-item :title="$t('settings.theme.title')" name="7">
         <ul class="setting-list">
           <li class="setting-item">
             {{ $t('header.theme') }}：
@@ -171,7 +179,7 @@
 <script lang="ts" setup>
 import { computed, watch } from 'vue'
 import { store } from '@/stores'
-import { ThemeModeEnum, UserSettingsModel } from '@/common/model'
+import { ImageLinkTypeEnum, ThemeModeEnum, UserSettingsModel } from '@/common/model'
 
 const userSettings = computed(() => store.getters.getUserSettings).value
 
@@ -194,12 +202,18 @@ const setWatermarkConfig = (config: UserSettingsModel['watermark']) => {
   persistUserSettings()
 }
 
+const isDeployGitHubPages = (name: string) => {
+  return name === ImageLinkTypeEnum.GitHubPages && !userSettings.deploy.github.status
+}
+
 watch(
-  () => userSettings.imageName,
-  (ins) => {
-    if (ins.autoTimestampNaming) {
+  () => userSettings.imageName.autoTimestampNaming,
+  (enable) => {
+    if (enable) {
       userSettings.imageName.autoAddHash = false
       userSettings.imageName.prefixNaming.enable = false
+    } else {
+      userSettings.imageName.autoAddHash = true
     }
     persistUserSettings()
   },
